@@ -1,12 +1,14 @@
 from dotenv import load_dotenv
 import os
-from anthropic import AnthropicBedrock
+from anthropic import AnthropicFoundry
 
 load_dotenv()
 
-ANTHROPIC_API_KEY=os.environ.get("ANTHROPIC_API_KEY")
 
-client = AnthropicBedrock(api_key=ANTHROPIC_API_KEY, aws_region="ap-south-1")
+client = AnthropicFoundry(
+    base_url=os.environ.get("AZURE_FOUNDRY_BASE_URL"),
+    api_key=os.environ.get("AZURE_FOUNDRY_API_KEY")
+)
 
 message = client.messages.create(
     max_tokens=1024,
@@ -17,10 +19,8 @@ message = client.messages.create(
             "content": "Hello, Claude. My name is Vishal"
         }
     ],
-    model="in.anthropic.claude-haiku-4-5-20251001-v1:0"
+    model=os.environ.get("AZURE_FOUNDRY_DEPLOYMENT")
 )
-
-print(message.to_json())
 
 for content in message.content:
     if content.type == "text":
